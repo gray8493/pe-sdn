@@ -21,8 +21,15 @@ try {
   process.exit(1);
 }
 
-await sql.query(schema);
-console.log('Schema users đã được tạo/cập nhật.');
+const statements = schema
+  .split(';')
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+for (const statement of statements) {
+  await sql.query(statement);
+}
+console.log(`Schema đã được tạo/cập nhật (${statements.length} lệnh).`);
 
 const columns = await sql`
   SELECT column_name, data_type FROM information_schema.columns

@@ -1,6 +1,7 @@
 import { sql } from '@/lib/db'
 import { hashPassword } from '@/lib/password'
 import { createSession } from '@/lib/session'
+import { seedSampleExpenses } from '@/lib/seed'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -51,5 +52,6 @@ export async function POST(request: Request) {
   }
 
   await createSession(user)
+  await seedSampleExpenses(user.id)
   return Response.json({ ok: true })
 }
