@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { getSession } from '@/lib/session'
-import { ShieldCheck, ChevronRight, LogOut, ArrowRight, User } from 'lucide-react'
+import { ShieldCheck, ChevronRight, LogOut, ArrowRight } from 'lucide-react'
 
 export const instant = false
 
@@ -76,7 +76,7 @@ export default async function Home() {
             Hệ thống Đăng ký & Đăng nhập
           </h1>
           <p className="mt-4 text-base text-slate-600 sm:text-lg dark:text-slate-400">
-            Dự án đã được tích hợp trực tiếp với <strong>Supabase Auth</strong> và gỡ bỏ hoàn toàn Neon Database.
+            Đăng ký, đăng nhập và quản lý phiên an toàn với <strong>Supabase Auth</strong>.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">

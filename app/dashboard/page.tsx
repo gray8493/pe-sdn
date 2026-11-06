@@ -95,7 +95,7 @@ export default async function DashboardPage() {
 
             <div className="flex flex-col gap-2 rounded-2xl border border-blue-100 bg-blue-50/50 p-4 text-sm text-blue-800 dark:border-blue-900/50 dark:bg-blue-950/30 dark:text-blue-300">
               <span className="font-semibold">Trạng thái kết nối:</span>
-              <span>Đã loại bỏ Neon DB và chuyển toàn bộ xác thực sang Supabase Backend thành công.</span>
+              <span>Đã kết nối Supabase thành công.</span>
             </div>
           </div>
         </div>

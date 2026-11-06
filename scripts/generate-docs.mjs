@@ -37,7 +37,8 @@ const doc = new Document({
           spacing: { before: 200 },
           children: [
             new TextRun({
-              text: "Tài khoản test đã có sẵn 8 khoản chi mẫu khi đăng nhập vào trang Quản lý chi tiêu.",
+              // TODO: cập nhật ghi chú theo đề (vd: dữ liệu mẫu có sẵn cho tài khoản test)
+              text: "Đăng nhập bằng tài khoản test ở trên để vào trang Dashboard.",
               italics: true,
               color: "666666",
             }),
