@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String       @id @default(cuid())
+  email        String       @unique
+  passwordHash String
+  createdAt    DateTime     @default(now())
+  readingLogs  ReadingLog[]
+}
+
+model ReadingLog {
+  id          String   @id @default(cuid())
+  userId      String
+  bookTitle   String
+  minutesRead Int
+  genre       String
+  note        String   @default("")
+  favorite    Boolean  @default(false)
+  readOn      DateTime @db.Date
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookTitle, minutesRead, readOn])
+  @@index([userId, readOn])
+}

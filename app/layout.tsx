@@ -1,36 +1,34 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
+import './globals.css'
+import { getCurrentUser } from '@/lib/auth'
+import { AuthProvider } from '@/components/auth-provider'
+import { ReadingLogsProvider } from '@/components/reading-logs/reading-logs-provider'
+import { SiteHeader } from '@/components/site-header'
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
+const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: "PE-SDN — Xác thực Supabase",
-  description: "Ứng dụng xác thực Đăng ký & Đăng nhập kết nối với Supabase.",
-};
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html
-      lang="vi"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col font-sans selection:bg-blue-500/20 selection:text-blue-700 dark:selection:bg-blue-400/20 dark:selection:text-blue-300">
-        {children}
-      </body>
-    </html>
-  );
+  title: 'ReadLog',
+  description: 'Track your reading sessions: book, minutes, genre and date.',
 }
 
+export const dynamic = 'force-dynamic'
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const user = await getCurrentUser()
+
+  return (
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+      <body className="flex min-h-full flex-col overflow-x-hidden font-sans">
+        <AuthProvider initialUser={user}>
+          <ReadingLogsProvider>
+            <SiteHeader />
+            <main className="flex flex-1 flex-col">{children}</main>
+          </ReadingLogsProvider>
+        </AuthProvider>
+      </body>
+    </html>
+  )
+}

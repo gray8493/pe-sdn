@@ -1,8 +1,8 @@
-import { NextResponse, type NextRequest } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { NextResponse } from 'next/server'
+import { clearSessionCookie } from '@/lib/auth'
 
-export async function POST(request: NextRequest) {
-  const supabase = await createClient()
-  await supabase.auth.signOut()
-  return NextResponse.redirect(new URL('/', request.url), { status: 302 })
+export async function POST() {
+  const res = NextResponse.json({ success: true }, { status: 200 })
+  clearSessionCookie(res)
+  return res
 }

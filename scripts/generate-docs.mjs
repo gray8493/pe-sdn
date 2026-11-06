@@ -1,54 +1,36 @@
-import { Document, Packer, Paragraph, TextRun, HeadingLevel } from "docx";
-import { writeFileSync } from "node:fs";
+// Generates the submission Word file following the exam template exactly.
+// Usage: node scripts/generate-docs.mjs [outputDir]
+import { Document, Packer, Paragraph, TextRun } from "docx";
+import { writeFileSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const repoRoot = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const outDir = path.resolve(process.argv[2] ?? repoRoot);
 
-const info = [
-  ["MSSV", "QE190056"],
-  ["Họ và tên", "Trần Đặng Anh Thi"],
-  ["Link Vercel", "https://pe-sdn-self.vercel.app"],
-  ["Link GitHub", "https://github.com/gray8493/pe-sdn"],
-  ["Tài khoản test", "qe190056@demo.com / Qe190056@demo"],
+const STUDENT_CODE = "QE190056";
+
+const lines = [
+  ["Student Code", STUDENT_CODE],
+  ["Full Name", "Trần Đặng Anh Thi"],
+  ["GitHub Repository URL", "https://github.com/gray8493/pe-sdn"],
+  ["Vercel Production URL", "https://pe-sdn-self.vercel.app"],
+  ["Test account email", "grader.qe190056@example.com"],
+  ["Test account password", "Test1234!"],
 ];
 
 const doc = new Document({
   sections: [
     {
-      children: [
-        new Paragraph({
-          text: "THÔNG TIN NỘP BÀI",
-          heading: HeadingLevel.TITLE,
-          alignment: "center",
-          spacing: { after: 400 },
-        }),
-        ...info.map(
-          (item) =>
-            new Paragraph({
-              spacing: { after: 200 },
-              children: [
-                new TextRun({ text: `${item[0]}: `, bold: true }),
-                new TextRun({ text: item[1] }),
-              ],
-            })
-        ),
-        new Paragraph({
-          spacing: { before: 200 },
-          children: [
-            new TextRun({
-              // TODO: cập nhật ghi chú theo đề (vd: dữ liệu mẫu có sẵn cho tài khoản test)
-              text: "Đăng nhập bằng tài khoản test ở trên để vào trang Dashboard.",
-              italics: true,
-              color: "666666",
-            }),
-          ],
-        }),
-      ],
+      children: lines.map(
+        ([label, value]) =>
+          new Paragraph({ children: [new TextRun(`${label}: ${value}`)] })
+      ),
     },
   ],
 });
 
-const buffer = await Packer.toBuffer(doc);
-writeFileSync(path.join(repoRoot, "QE190056.docx"), buffer);
-console.log("Generated:", path.join(repoRoot, "QE190056.docx"));
+mkdirSync(outDir, { recursive: true });
+const file = path.join(outDir, `${STUDENT_CODE}.docx`);
+writeFileSync(file, await Packer.toBuffer(doc));
+console.log("Generated:", file);
