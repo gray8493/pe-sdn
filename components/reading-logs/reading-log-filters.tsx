@@ -11,8 +11,8 @@ export function ReadingLogFilters() {
   const { filters, setFilters, clearFilters } = useReadingLogs()
 
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-      <div className="relative min-w-0 flex-1 sm:min-w-[12rem]">
+    <div className="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+      <div className="relative min-w-0">
         <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           data-testid="search-input"
@@ -24,11 +24,11 @@ export function ReadingLogFilters() {
         />
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex min-w-0 items-center gap-2">
         <select
           data-testid="filter-genre"
           aria-label="Filter by genre"
-          className={`${selectClass} w-auto min-w-[9rem] flex-1 sm:flex-none`}
+          className={`${selectClass} min-w-0 flex-1 sm:w-36 sm:flex-none`}
           value={filters.genre}
           onChange={(e) => setFilters({ genre: e.target.value })}
         >
