@@ -13,7 +13,7 @@ export function ReadingLogFilters() {
   const { filters, setFilters, clearFilters } = useReadingLogs()
 
   return (
-    <Card className="py-4">
+    <Card className="border-white/60 bg-white/85 py-4 shadow-sm backdrop-blur">
       <CardContent className="grid grid-cols-1 gap-3 px-4 sm:grid-cols-[1fr_auto_auto] sm:items-end md:grid-cols-[minmax(0,1fr)_10rem_auto_auto]">
         <div className="flex flex-col gap-2 sm:col-span-3 md:col-span-1">
           <Label htmlFor="search-input">Search</Label>

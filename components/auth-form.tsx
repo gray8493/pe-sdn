@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Loader2 } from 'lucide-react'
+import { Loader2, LogIn, UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -80,8 +80,11 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
   return (
     <div className="flex flex-1 items-center justify-center px-4 py-12">
-      <Card className="w-full max-w-md">
-        <CardHeader>
+      <Card className="w-full max-w-md border-white/60 bg-white/85 shadow-xl shadow-indigo-500/10 backdrop-blur">
+        <CardHeader className="text-center">
+          <span className="mx-auto mb-2 flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-white shadow-lg shadow-indigo-500/30">
+            {isRegister ? <UserPlus className="size-6" /> : <LogIn className="size-6" />}
+          </span>
           <CardTitle className="text-2xl">{isRegister ? 'Create an account' : 'Login'}</CardTitle>
           <CardDescription>
             {isRegister ? 'Register to start logging your reading.' : 'Welcome back to ReadLog.'}
@@ -171,7 +174,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
             )}
             </fieldset>
 
-            <Button type="submit" data-testid={`${p}-submit`} disabled={pending} className="mt-2">
+            <Button type="submit" data-testid={`${p}-submit`} disabled={pending} size="lg" className="mt-2 bg-gradient-to-r from-indigo-600 to-violet-600 shadow-md shadow-indigo-500/25 hover:opacity-95">
               {pending && <Loader2 className="animate-spin" />}
               {isRegister ? 'Register' : 'Login'}
             </Button>

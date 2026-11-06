@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Loader2, Plus } from 'lucide-react'
+import { BookPlus, Loader2, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -72,9 +72,14 @@ export function ReadingLogForm() {
   }
 
   return (
-    <Card>
+    <Card className="border-white/60 bg-white/85 shadow-lg shadow-indigo-500/5 backdrop-blur">
       <CardHeader>
-        <CardTitle>Add a reading session</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <span className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 text-white">
+            <BookPlus className="size-4" />
+          </span>
+          Add a reading session
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <form
@@ -181,7 +186,13 @@ export function ReadingLogForm() {
             </div>
           </fieldset>
 
-          <Button type="submit" data-testid="btn-add-reading-log" disabled={pending}>
+          <Button
+            type="submit"
+            data-testid="btn-add-reading-log"
+            disabled={pending}
+            size="lg"
+            className="bg-gradient-to-r from-indigo-600 to-violet-600 shadow-md shadow-indigo-500/25 hover:opacity-95"
+          >
             {pending ? <Loader2 className="animate-spin" /> : <Plus />}
             Add reading session
           </Button>
