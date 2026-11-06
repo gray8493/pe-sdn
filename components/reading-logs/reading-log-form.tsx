@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { BookPlus, Loader2, Plus } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -12,12 +12,12 @@ import { useReadingLogs, type NewReadingLog } from './reading-logs-provider'
 const EMPTY: NewReadingLog = { bookTitle: '', minutesRead: '', genre: '', note: '', readOn: '' }
 
 export const selectClass =
-  'border-input flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:border-destructive md:text-sm'
+  'border-input flex h-9 w-full rounded-md border bg-background px-3 py-1 text-base shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:border-destructive md:text-sm'
 
 function FieldError({ testId, message }: { testId: string; message?: string }) {
   if (!message) return null
   return (
-    <p data-testid={testId} className="text-sm text-destructive">
+    <p data-testid={testId} className="text-xs text-destructive">
       {message}
     </p>
   )
@@ -72,16 +72,11 @@ export function ReadingLogForm() {
   }
 
   return (
-    <Card className="border-white/60 bg-white/85 shadow-lg shadow-indigo-500/5 backdrop-blur">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <span className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 text-white">
-            <BookPlus className="size-4" />
-          </span>
-          Add a reading session
-        </CardTitle>
+    <Card className="gap-4 py-5 shadow-none">
+      <CardHeader className="px-5">
+        <CardTitle className="text-sm font-medium">New session</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-5">
         <form
           data-testid="reading-log-form"
           noValidate
@@ -92,7 +87,7 @@ export function ReadingLogForm() {
             <p
               data-testid="error-reading-log"
               role="alert"
-              className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+              className="rounded-md border border-destructive/30 px-3 py-2 text-sm text-destructive"
             >
               {apiError}
             </p>
@@ -101,7 +96,7 @@ export function ReadingLogForm() {
             <p
               data-testid="reading-log-success"
               role="status"
-              className="rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-700"
+              className="rounded-md border px-3 py-2 text-sm"
             >
               {success}
             </p>
@@ -109,7 +104,7 @@ export function ReadingLogForm() {
 
           {/* Inputs are locked while saving so typing can't be wiped by the reset. */}
           <fieldset disabled={pending} className="flex min-w-0 flex-col gap-4">
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
               <Label htmlFor="input-book-title">Book title</Label>
               <Input
                 id="input-book-title"
@@ -117,14 +112,13 @@ export function ReadingLogForm() {
                 value={values.bookTitle}
                 aria-invalid={!!errors.bookTitle}
                 onChange={(e) => onChange('bookTitle', e.target.value)}
-                placeholder="Atomic Habits"
               />
               <FieldError testId="error-book-title" message={errors.bookTitle} />
             </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="input-minutes">Minutes read</Label>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex min-w-0 flex-col gap-1.5">
+                <Label htmlFor="input-minutes">Minutes</Label>
                 <Input
                   id="input-minutes"
                   data-testid="input-minutes"
@@ -133,46 +127,45 @@ export function ReadingLogForm() {
                   value={values.minutesRead}
                   aria-invalid={!!errors.minutesRead}
                   onChange={(e) => onChange('minutesRead', e.target.value)}
-                  placeholder="40"
                 />
                 <FieldError testId="error-minutes" message={errors.minutesRead} />
               </div>
 
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="input-genre">Genre</Label>
-                <select
-                  id="input-genre"
-                  data-testid="input-genre"
-                  className={selectClass}
-                  value={values.genre}
-                  aria-invalid={!!errors.genre}
-                  onChange={(e) => onChange('genre', e.target.value)}
-                >
-                  <option value="">Choose genre</option>
-                  {GENRES.map((g) => (
-                    <option key={g} value={g}>
-                      {g}
-                    </option>
-                  ))}
-                </select>
-                <FieldError testId="error-genre" message={errors.genre} />
+              <div className="flex min-w-0 flex-col gap-1.5">
+                <Label htmlFor="input-date">Date</Label>
+                <Input
+                  id="input-date"
+                  data-testid="input-date"
+                  type="date"
+                  value={values.readOn}
+                  aria-invalid={!!errors.readOn}
+                  onChange={(e) => onChange('readOn', e.target.value)}
+                />
+                <FieldError testId="error-date" message={errors.readOn} />
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="input-date">Date</Label>
-              <Input
-                id="input-date"
-                data-testid="input-date"
-                type="date"
-                value={values.readOn}
-                aria-invalid={!!errors.readOn}
-                onChange={(e) => onChange('readOn', e.target.value)}
-              />
-              <FieldError testId="error-date" message={errors.readOn} />
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="input-genre">Genre</Label>
+              <select
+                id="input-genre"
+                data-testid="input-genre"
+                className={selectClass}
+                value={values.genre}
+                aria-invalid={!!errors.genre}
+                onChange={(e) => onChange('genre', e.target.value)}
+              >
+                <option value="">Choose genre</option>
+                {GENRES.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
+              </select>
+              <FieldError testId="error-genre" message={errors.genre} />
             </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
               <Label htmlFor="input-note">
                 Note <span className="font-normal text-muted-foreground">(optional)</span>
               </Label>
@@ -181,20 +174,13 @@ export function ReadingLogForm() {
                 data-testid="input-note"
                 value={values.note}
                 onChange={(e) => onChange('note', e.target.value)}
-                placeholder="Chapter 3"
               />
             </div>
           </fieldset>
 
-          <Button
-            type="submit"
-            data-testid="btn-add-reading-log"
-            disabled={pending}
-            size="lg"
-            className="bg-gradient-to-r from-indigo-600 to-violet-600 shadow-md shadow-indigo-500/25 hover:opacity-95"
-          >
-            {pending ? <Loader2 className="animate-spin" /> : <Plus />}
-            Add reading session
+          <Button type="submit" data-testid="btn-add-reading-log" disabled={pending}>
+            {pending && <Loader2 className="animate-spin" />}
+            Add session
           </Button>
         </form>
       </CardContent>

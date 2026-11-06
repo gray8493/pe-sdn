@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Loader2, LogIn, UserPlus } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -79,15 +79,12 @@ export function AuthForm({ mode }: { mode: Mode }) {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center px-4 py-12">
-      <Card className="w-full max-w-md border-white/60 bg-white/85 shadow-xl shadow-indigo-500/10 backdrop-blur">
-        <CardHeader className="text-center">
-          <span className="mx-auto mb-2 flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-white shadow-lg shadow-indigo-500/30">
-            {isRegister ? <UserPlus className="size-6" /> : <LogIn className="size-6" />}
-          </span>
-          <CardTitle className="text-2xl">{isRegister ? 'Create an account' : 'Login'}</CardTitle>
+    <div className="flex flex-1 items-start justify-center px-4 py-16 sm:py-24">
+      <Card className="w-full max-w-sm shadow-none">
+        <CardHeader>
+          <CardTitle className="text-xl tracking-tight">{isRegister ? 'Create an account' : 'Login'}</CardTitle>
           <CardDescription>
-            {isRegister ? 'Register to start logging your reading.' : 'Welcome back to ReadLog.'}
+            {isRegister ? 'Create an account to start your reading log.' : 'Sign in to continue to your reading log.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -101,7 +98,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
               <p
                 data-testid="error-auth"
                 role="alert"
-                className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                className="rounded-md border border-destructive/30 px-3 py-2 text-sm text-destructive"
               >
                 {authError}
               </p>
@@ -110,7 +107,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
               <p
                 data-testid="form-success"
                 role="status"
-                className="rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-700"
+                className="rounded-md border px-3 py-2 text-sm text-foreground"
               >
                 {success}
               </p>
@@ -174,24 +171,24 @@ export function AuthForm({ mode }: { mode: Mode }) {
             )}
             </fieldset>
 
-            <Button type="submit" data-testid={`${p}-submit`} disabled={pending} size="lg" className="mt-2 bg-gradient-to-r from-indigo-600 to-violet-600 shadow-md shadow-indigo-500/25 hover:opacity-95">
+            <Button type="submit" data-testid={`${p}-submit`} disabled={pending} className="mt-1 w-full">
               {pending && <Loader2 className="animate-spin" />}
               {isRegister ? 'Register' : 'Login'}
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          <p className="mt-6 text-sm text-muted-foreground">
             {isRegister ? (
               <>
                 Already have an account?{' '}
-                <Link href="/login" className="font-medium text-primary hover:underline">
+                <Link href="/login" className="font-medium text-foreground underline underline-offset-4">
                   Login
                 </Link>
               </>
             ) : (
               <>
                 No account yet?{' '}
-                <Link href="/register" className="font-medium text-primary hover:underline">
+                <Link href="/register" className="font-medium text-foreground underline underline-offset-4">
                   Register
                 </Link>
               </>

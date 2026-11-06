@@ -12,25 +12,23 @@ export function ReadingLogsView() {
   if (!user) return null
 
   return (
-    <div data-testid="reading-logs-page" className="mx-auto w-full max-w-6xl px-4 py-8">
-      <div className="mb-8">
-        <h1 className="bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 bg-clip-text text-3xl font-extrabold tracking-tight text-transparent sm:text-4xl">
-          My reading sessions
-        </h1>
+    <div data-testid="reading-logs-page" className="mx-auto w-full max-w-5xl px-4 py-10">
+      <header className="mb-8">
+        <h1 className="text-2xl font-semibold tracking-tight">Reading logs</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Log what you read, star your favorites and watch the minutes add up.
+          Add a session, then filter and review what you have read.
         </p>
-      </div>
+      </header>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
-        <div className="flex min-w-0 flex-col gap-6">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
+        <aside className="flex min-w-0 flex-col gap-6 lg:sticky lg:top-20 lg:self-start">
           <ReadingLogForm />
           <ReadingLogSummary />
-        </div>
-        <div className="flex min-w-0 flex-col gap-4">
+        </aside>
+        <section className="flex min-w-0 flex-col gap-4">
           <ReadingLogFilters />
           <ReadingLogList />
-        </div>
+        </section>
       </div>
     </div>
   )
