@@ -134,7 +134,25 @@ const doc = new Document({
     {
       children: [
         // ---- Page 1: exam template, copied exactly ----
-        ...template.map(([label, value]) => new Paragraph({ children: [new TextRun(`${label}: ${value}`)] })),
+        // Boxed with paragraph borders (not a table) so the text stays plain lines.
+        ...template.map(([label, value], i) => {
+          const line = { style: BorderStyle.SINGLE, size: 12, color: ACCENT, space: 8 }
+          return new Paragraph({
+            shading: { type: ShadingType.CLEAR, color: "auto", fill: "EAF1FB" },
+            border: {
+              left: line,
+              right: line,
+              ...(i === 0 ? { top: line } : {}),
+              ...(i === template.length - 1 ? { bottom: line } : {}),
+            },
+            indent: { left: 240, right: 240 },
+            spacing: { before: i === 0 ? 0 : 60, after: 60, line: 300 },
+            children: [
+              new TextRun({ text: `${label}: `, font: FONT, size: 24, bold: true, color: ACCENT }),
+              new TextRun({ text: value, font: FONT, size: 24 }),
+            ],
+          })
+        }),
         new Paragraph({ children: [new PageBreak()] }),
 
         // ---- Page 2+: project description ----
