@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PE-SDN — Quản lý chi tiêu cá nhân thông minh",
-  description: "Ứng dụng theo dõi, phân loại và phân tích chi tiêu cá nhân hiện đại, trực quan và bảo mật.",
+  title: "PE-SDN — Xác thực Supabase",
+  description: "Ứng dụng xác thực Đăng ký & Đăng nhập kết nối với Supabase.",
 };
 
 export default function RootLayout({

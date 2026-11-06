@@ -2,11 +2,14 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { User, Mail, Lock, Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react'
+import { User, Mail, Lock, Eye, EyeOff, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 export default function RegisterForm() {
   const router = useRouter()
+  const supabase = createClient()
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
@@ -14,33 +17,55 @@ export default function RegisterForm() {
     event.preventDefault()
     const form = event.currentTarget
     setError(null)
+    setSuccess(null)
     setPending(true)
 
     try {
       const formData = new FormData(form)
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.get('name'),
-          email: formData.get('email'),
-          password: formData.get('password'),
-        }),
+      const name = String(formData.get('name') ?? '').trim()
+      const email = String(formData.get('email') ?? '').trim()
+      const password = String(formData.get('password') ?? '')
+
+      if (!email || !password) {
+        setError('Vui lòng nhập đầy đủ thông tin')
+        setPending(false)
+        return
+      }
+
+      if (password.length < 6) {
+        setError('Mật khẩu phải có ít nhất 6 ký tự')
+        setPending(false)
+        return
+      }
+
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name || undefined,
+          },
+        },
       })
 
-      if (res.ok) {
+      if (signUpError) {
+        setError(signUpError.message || 'Đã có lỗi xảy ra khi tạo tài khoản')
+        setPending(false)
+        return
+      }
+
+      // Nếu Supabase trả về session ngay lập tức (không bắt confirm email)
+      if (data.session) {
         router.push('/dashboard')
         router.refresh()
         return
       }
 
-      const data = (await res.json().catch(() => null)) as {
-        error?: string
-      } | null
-      setError(data?.error ?? 'Đã có lỗi xảy ra khi tạo tài khoản')
+      // Nếu cần xác nhận email
+      setSuccess('Đăng ký tài khoản thành công! Vui lòng kiểm tra hộp thư email của bạn để xác nhận (nếu Supabase bật email confirmation).')
+      setPending(false)
     } catch {
-      setError('Không thể kết nối đến máy chủ, vui lòng thử lại sau.')
-    } finally {
+      setError('Không thể kết nối đến máy chủ Supabase, vui lòng thử lại sau.')
       setPending(false)
     }
   }
@@ -54,21 +79,26 @@ export default function RegisterForm() {
         </div>
       )}
 
+      {success && (
+        <div className="flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50/90 p-3.5 text-sm text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-950/50 dark:text-emerald-300">
+          <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
+          <span className="leading-snug">{success}</span>
+        </div>
+      )}
+
       {/* Name input */}
       <div className="flex flex-col gap-1.5">
         <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
           Họ và tên <span className="text-xs text-slate-400 font-normal">(không bắt buộc)</span>
         </label>
         <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
-            <User className="h-4 w-4" />
-          </div>
+          <User className="absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
           <input
-            type="text"
             name="name"
-            autoComplete="name"
+            type="text"
             placeholder="Nguyễn Văn A"
-            className="w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+            disabled={pending}
+            className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-11 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-900 dark:text-white dark:focus:border-blue-400"
           />
         </div>
       </div>
@@ -79,48 +109,46 @@ export default function RegisterForm() {
           Email
         </label>
         <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
-            <Mail className="h-4 w-4" />
-          </div>
+          <Mail className="absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
           <input
-            type="email"
             name="email"
-            required
+            type="email"
             autoComplete="email"
+            required
             placeholder="ban@example.com"
-            className="w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-10 pr-3.5 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+            disabled={pending}
+            className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-11 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-900 dark:text-white dark:focus:border-blue-400"
           />
         </div>
       </div>
 
       {/* Password input */}
       <div className="flex flex-col gap-1.5">
-        <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Mật khẩu
-          </label>
-          <span className="text-xs text-slate-400">Tối thiểu 8 ký tự</span>
-        </div>
+        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          Mật khẩu
+        </label>
         <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
-            <Lock className="h-4 w-4" />
-          </div>
+          <Lock className="absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
           <input
-            type={showPassword ? 'text' : 'password'}
             name="password"
-            required
-            minLength={8}
+            type={showPassword ? 'text' : 'password'}
             autoComplete="new-password"
-            placeholder="••••••••"
-            className="w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-10 pr-10 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
+            required
+            placeholder="Tối thiểu 6 ký tự"
+            disabled={pending}
+            className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-11 pr-11 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-500/10 disabled:opacity-50 dark:border-slate-800 dark:bg-slate-900 dark:text-white dark:focus:border-blue-400"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-            aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+            tabIndex={-1}
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
           >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showPassword ? (
+              <EyeOff className="h-5 w-5" />
+            ) : (
+              <Eye className="h-5 w-5" />
+            )}
           </button>
         </div>
       </div>
@@ -128,7 +156,7 @@ export default function RegisterForm() {
       <button
         type="submit"
         disabled={pending}
-        className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-600/30 transition-all hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/40 disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white shadow-md shadow-blue-500/20 transition hover:bg-blue-700 active:scale-[0.99] disabled:opacity-70"
       >
         {pending ? (
           <>
@@ -136,7 +164,7 @@ export default function RegisterForm() {
             <span>Đang tạo tài khoản...</span>
           </>
         ) : (
-          <span>Đăng ký ngay</span>
+          <span>Đăng ký tài khoản</span>
         )}
       </button>
     </form>

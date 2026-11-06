@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getSession } from '@/lib/session'
 import LoginForm from '@/components/login-form'
-import { Wallet, ArrowLeft } from 'lucide-react'
+import { ShieldCheck, ArrowLeft } from 'lucide-react'
 
 export const instant = false
 
@@ -30,13 +30,13 @@ export default async function LoginPage() {
       <div className="w-full max-w-md rounded-3xl border border-slate-200/80 bg-white/95 p-6 sm:p-8 shadow-xl backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/90">
         <div className="flex flex-col items-center text-center mb-6">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25 mb-3">
-            <Wallet className="h-6 w-6" />
+            <ShieldCheck className="h-6 w-6" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Chào mừng trở lại
+            Đăng nhập
           </h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Đăng nhập tài khoản để tiếp tục quản lý chi tiêu
+            Đăng nhập tài khoản Supabase của bạn
           </p>
         </div>
 
@@ -55,4 +55,3 @@ export default async function LoginPage() {
     </div>
   )
 }
-

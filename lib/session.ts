@@ -1,39 +1,35 @@
-import 'server-only'
-
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import {
-  SESSION_COOKIE,
-  SESSION_MAX_AGE,
-  signSessionToken,
-  verifySessionToken,
-  type SessionPayload,
-} from './auth'
+import { createClient } from '@/lib/supabase/server'
 
-export async function createSession(user: { id: string; email: string }) {
-  const token = await signSessionToken({ sub: user.id, email: user.email })
-  const cookieStore = await cookies()
-  cookieStore.set(SESSION_COOKIE, token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: SESSION_MAX_AGE,
-    path: '/',
-  })
-}
-
-export async function destroySession() {
-  const cookieStore = await cookies()
-  cookieStore.delete(SESSION_COOKIE)
+export type SessionPayload = {
+  sub: string
+  email: string
+  name?: string
 }
 
 export async function getSession(): Promise<SessionPayload | null> {
-  const token = (await cookies()).get(SESSION_COOKIE)?.value
-  return verifySessionToken(token)
+  try {
+    const supabase = await createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user || !user.email) return null
+
+    return {
+      sub: user.id,
+      email: user.email,
+      name: (user.user_metadata?.name as string) || undefined,
+    }
+  } catch {
+    return null
+  }
 }
 
 export async function requireSession(): Promise<SessionPayload> {
   const session = await getSession()
-  if (!session) redirect('/login')
+  if (!session) {
+    redirect('/login')
+  }
   return session
 }
